@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layoutpadrao}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Página de Login</title>
+  </head>
+  <body>
+    <!-- conteudo principal -->
+    <main layout:fragment="conteudo" th:fragment="formulario" id="main" class="flex flex-col align-middle justify-center w-full">
+      <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+      <div class="m-10">
+        <div class="relative w-full md:w-1/2">
+          <p>Usuário exemplo: grosbilda / 12345 / ADMIN</p>
+          <p>Usuário exemplo: estrobilobaldo / 12345 / USUARIO</p>
+          <p>Usuário exemplo: zirgonisvaldo / 12345 / ADMIN e USUARIO</p>
+          <div>
+            <span th:if="${param.error}">Usuário e/ou senha inválidos.</span>
+            <span th:if="${param.logout}">Você foi deslogado.</span>
+          </div>
+          <form th:hx-post="@{/login}" hx-target="#main" hx-swap="outerHTML">
+            <label for="username" class="block text-gray-700 font-medium mb-2 mt-10">Usuário</label>
+            <input type="text" id="username" name="username" autofocus="autofocus" class="block w-full px-4 py-3 text-gray-500 disabled:opacity-50 disabled:pointer-events-none border-gray-300 rounded-lg focus:border-gray-500 focus:ring-gray-500" />
+
+            <label for="password" class="block text-gray-700 font-medium mb-2 mt-10">Password</label>
+            <input type="password" id="password" name="password" class="block w-full px-4 py-3 text-gray-500 disabled:opacity-50 disabled:pointer-events-none border-gray-300 rounded-lg focus:border-gray-500 focus:ring-gray-500" />
+
+            <button type="submit" class="py-3 px-4 inline-flex items-center mt-5 gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none">Logar</button>
+          </form>
+        </div>
+      </div>
+
+      <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+    </main>
+    <!-- !conteudo principal -->
+  </body>
+</html>

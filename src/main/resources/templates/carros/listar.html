@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layoutpadrao}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Listar Carros</title>
+</head>
+
+<body>
+    <main layout:fragment="conteudo" th:fragment="tabela" id="main" class="flex flex-col align-middle w-full m-10">
+        <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+        
+        <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Carros</h2>
+
+        <div class="hidden md:flex flex-col mt-10">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-xl overflow-hidden shadow">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'codigo', 'Código', '')}"></div>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'placa', 'Placa', '')}"></div>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Modelo</th>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Cor</th>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">KM Atual</th>
+                                    <th scope="col" colspan="2" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="carro : ${pagina.conteudo}" class="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
+                                    <td th:text="${carro.codigo}" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"></td>
+                                    <td th:text="${carro.placa}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td>
+                                    <td th:text="${carro.modelo}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td>
+                                    <td th:text="${carro.cor}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td>
+                                    <td th:text="${carro.kmAtual}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td>
+                                    <td th:text="${carro.statusCarro}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td>
+
+
+                                    <td>
+                                        <a th:hx-get="@{/carros/alterar/{codigo}(codigo=${carro.codigo})}" 
+                                           hx-target="#main" 
+                                           hx-swap="outerHTML" 
+                                           class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Alterar</a>
+                                    </td>
+                                    <td>
+                                        <a th:hx-get="@{/carros/remover/{codigo}(codigo=${carro.codigo})}" 
+                                           hx-target="#main" 
+                                           hx-swap="outerHTML" 
+                                           th:hx-confirm="${'Você vai remover o carro de placa ' + carro.placa + '!'}" 
+                                           class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Remover</a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${pagina.vazia}">
+                                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">Nenhum carro encontrado.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        
+        <div class="flex md:hidden flex-col md:w-2/3 mt-10">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div th:each="carro : ${pagina.conteudo}" class="border rounded-xl p-4 mb-4 shadow-sm">
+                        <p class="font-medium text-gray-800" th:text="'Código: ' + ${carro.codigo}"></p>
+                        <p class="text-gray-700" th:text="'Placa: ' + ${carro.placa}"></p>
+                        <p class="text-gray-700" th:text="'Modelo: ' + ${carro.modelo}"></p>
+                        <p class="text-gray-700" th:text="'Cor: ' + ${carro.cor}"></p>
+                        <p class="text-gray-700" th:text="'KM Atual: ' + ${carro.kmAtual}"></p>
+                        <div class="mt-2 flex gap-4">
+                            <a th:hx-get="@{/carros/alterar/{codigo}(codigo=${carro.codigo})}" 
+                               hx-target="#main" 
+                               hx-swap="outerHTML" 
+                               class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Alterar</a>
+                            <a th:hx-get="@{/carros/remover/{codigo}(codigo=${carro.codigo})}" 
+                               hx-target="#main" 
+                               hx-swap="outerHTML" 
+                               th:hx-confirm="${'Você vai remover o carro de placa ' + carro.placa + '!'}" 
+                               class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Remover</a>
+                        </div>
+                        <hr class="mt-5 mb-5" />
+                    </div>
+                    <div th:if="${pagina.vazia}" class="text-center text-gray-600">
+                        Nenhum carro encontrado.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{layout/fragments/paginacao :: paginacao(${pagina})}"></div>
+        
+    </main>
+    </body>
+
+</html>

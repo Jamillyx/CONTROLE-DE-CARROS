@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layout-padrao}" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Cadastrar Movimentação (Saída)</title>
+</head>
+
+<body>
+    <main layout:fragment="conteudo" th:fragment="formulario" id="main" class="flex flex-col align-middle w-full m-10">
+        <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+
+        <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Cadastrar Movimentação (Saída)</h2>
+
+        <div class="md:flex flex-col mt-5">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <form th:hx-post="@{/movimentacoes/cadastrar}" hx-target="#form-cadastro" hx-swap="outerHTML"
+                        th:object="${movimentacao}" class="md:flex flex-col w-2/3 mt-10 ms-16" id="form-cadastro">
+
+                        <div th:if="${#fields.hasErrors('*')}"
+                            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+                            role="alert">
+                            <strong class="font-bold">Erro!</strong>
+                            <span class="block sm:inline" th:each="error : ${#fields.errors('*')}"
+                                th:text="${error}"></span>
+                        </div>
+
+                        <label for="motorista.nome" class="block text-gray-700 font-medium mb-2 mt-6">Nome do
+                            Motorista</label>
+                        <div class="relative w-full md:w-1/2">
+                            <input type="text" th:field="*{motorista.nome}" disabled
+                                class="block w-full px-4 py-3 text-gray-500 disabled:opacity-50 disabled:pointer-events-none" />
+                            <input type="hidden" th:field="*{motorista.codigo}" />
+                        </div>
+
+                        <label for="carro.placa" class="block text-gray-700 font-medium mb-2 mt-6">Placa do
+                            Carro</label>
+                        <div class="relative w-full md:w-1/2">
+                            <input type="text" th:field="*{carro.placa}" disabled
+                                class="block w-full px-4 py-3 text-gray-500 disabled:opacity-50 disabled:pointer-events-none" />
+                            <input type="hidden" th:field="*{carro.codigo}" />
+                        </div>
+
+                        <label for="carro.kmAtual" class="block text-gray-700 font-medium mb-2 mt-6">Quilometragem Atual
+                            do Carro</label>
+                        <div class="relative w-full md:w-1/2">
+                            <input type="text" th:field="*{carro.kmAtual}" disabled
+                                class="block w-full px-4 py-3 text-gray-500 disabled:opacity-50 disabled:pointer-events-none" />
+                        </div>
+
+
+                        <div
+                            th:replace="~{layout/fragments/forms :: inputlocaldatetime('Data e Hora de Saída', 'dataSaida', 'horaSaida', ${movimentacao.dataSaida}, ${movimentacao.horaSaida})}">
+                        </div>
+                        <input type="hidden" th:field="*{dataSaida}" />
+                        <input type="hidden" th:field="*{horaSaida}" />
+
+                        <div class="mt-5">
+                            <button type="submit"
+                                class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none">Registrar
+                                Saída</button>
+                            <a th:href="@{/movimentacoes/cadastrar}"
+                                class="py-3 px-4 ms-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${notificacao != null}" th:object="${notificacao}">
+            <input type="hidden" id="mensagemSA2" th:value="*{mensagem}">
+            <input type="hidden" id="tipoSA2" th:value="*{tipo}">
+            <input type="hidden" id="intervaloSA2" th:value="*{intervalo}">
+        </div>
+
+    </main>
+</body>
+
+</html>

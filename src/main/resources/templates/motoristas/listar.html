@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layoutpadrao}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Listar Motoristas</title>
+</head>
+
+<body>
+    <main layout:fragment="conteudo" th:fragment="tabela" id="main" class="flex flex-col align-middle w-full m-10">
+        <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+        
+        <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Motoristas</h2>
+
+        <div class="hidden md:flex flex-col mt-10">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-xl overflow-hidden shadow">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'codigo', 'Código', '')}"></div>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'nome', 'Nome', '')}"></div>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">CPF</th>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Nascimento</th>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">CNH</th>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th scope="col" colspan="2" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr th:each="motorista : ${pagina.conteudo}" class="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800" th:text="${motorista.codigo}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800" th:text="${motorista.nome}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800" th:text="${motorista.cpf}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800" th:text="${#temporals.format(motorista.dataNascimento, 'dd/MM/yyyy')}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800" th:text="${motorista.cnh}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800" th:text="${motorista.status.descricao}"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a th:hx-get="@{/motoristas/alterar/{codigo}(codigo=${motorista.codigo})}" hx-target="#main" hx-swap="outerHTML" class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Alterar</a>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a th:hx-get="@{/motoristas/remover/{codigo}(codigo=${motorista.codigo})}" hx-target="#main" hx-swap="outerHTML" th:hx-confirm="${'Você vai remover o motorista ' + motorista.nome + '!'}" class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Remover</a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${pagina.vazia}">
+                                    <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">Nenhum motorista encontrado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex md:hidden flex-col md:w-2/3 mt-10">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div th:each="motorista : ${pagina.conteudo}">
+                        <p th:text="'Código: ' + ${motorista.codigo}"></p>
+                        <p th:text="'Nome: ' + ${motorista.nome}"></p>
+                        <p th:text="'CPF: ' + ${motorista.cpf}"></p>
+                        <p th:text="'Nascimento: ' + ${#temporals.format(motorista.dataNascimento, 'dd/MM/yyyy')}"></p>
+                        <p th:text="'CNH: ' + ${motorista.cnh}"></p>
+                        <p th:text="'Status: ' + ${motorista.status.descricao}"></p>
+                        <hr class="mt-5 mb-5" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div th:replace="~{layout/fragments/paginacao :: paginacao(${pagina})}"></div>
+        
+    </main>
+    </body>
+
+</html>

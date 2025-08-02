@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layoutpadrao}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Listar Movimentações</title>
+</head>
+
+<body>
+    <main layout:fragment="conteudo" th:fragment="tabela" id="main" class="flex flex-col align-middle w-full m-10">
+        <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+
+        <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Movimentações</h2>
+
+        <div class="hidden md:flex flex-col mt-10">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div class="border rounded-xl overflow-hidden shadow">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'm.codigo', 'Código', '')}"></div>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'm.dataSaida', 'Saída', '')}"></div>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'm.dataRetorno', 'Retorno', '')}"></div>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Carro (Placa/Modelo)</th>
+                                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Motorista (Nome/CNH)</th>
+                                    <div th:replace="~{layout/fragments/paginacao :: coluna(${pagina}, 'm.statusMovimentacao', 'Status', '')}"></div> <th scope="col" colspan="3" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="movimentacao : ${pagina.conteudo}" class="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
+                                    <td th:text="${movimentacao.codigo}" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"></td>
+                                    <td th:text="${{movimentacao.dataSaida}}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td>
+                                    <td th:text="${{movimentacao.dataRetorno}}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                        <span th:text="${movimentacao.carro.placa}"></span> / <span th:text="${movimentacao.carro.modelo}"></span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                        <span th:text="${movimentacao.motorista.nome}"></span> (<span th:text="${movimentacao.motorista.cnh}"></span>)
+                                    </td>
+                                    <td th:text="${movimentacao.statusMovimentacao != null ? movimentacao.statusMovimentacao.descricao : 'N/A'}" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"></td> <td>
+                                        <a th:hx-get="@{/movimentacoes/alterar/{codigo}(codigo=${movimentacao.codigo})}"
+                                            hx-target="#main" hx-swap="outerHTML"
+                                            class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Alterar</a>
+                                    </td>
+                                    <td>
+                                        <a th:if="${movimentacao.statusMovimentacao != T(web.controlevacinacao.model.StatusMovimentacao).FINALIZADA}" th:hx-get="@{/movimentacoes/finalizar/{codigo}(codigo=${movimentacao.codigo})}"
+                                            hx-target="#main" hx-swap="outerHTML"
+                                            th:hx-confirm="${'Deseja finalizar a movimentação ' + movimentacao.codigo + '?'}"
+                                            class="cursor-pointer text-green-600 hover:text-green-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Finalizar</a>
+                                        <span th:if="${movimentacao.statusMovimentacao == T(web.controlevacinacao.model.StatusMovimentacao).FINALIZADA}" class="text-gray-500">Finalizada</span> </td>
+                                    <td>
+                                        <a th:hx-get="@{/movimentacoes/remover/{codigo}(codigo=${movimentacao.codigo})}"
+                                            hx-target="#main" hx-swap="outerHTML"
+                                            th:hx-confirm="${'Você vai remover a movimentação ' + movimentacao.codigo + '!'}"
+                                            class="cursor-pointer text-red-600 hover:text-red-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Remover</a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${pagina.vazia}">
+                                    <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">Nenhuma movimentação encontrada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex md:hidden flex-col md:w-2/3 mt-10">
+            <div class="overflow-x-auto">
+                <div class="min-w-full inline-block align-middle">
+                    <div th:each="movimentacao : ${pagina.conteudo}">
+                        <p th:text="'Código: ' + ${movimentacao.codigo}"></p>
+                        <p th:text="'Saída: ' + ${{movimentacao.dataSaida}}"></p>
+                        <p th:text="'Retorno: ' + ${{movimentacao.dataRetorno}}"></p>
+                        <p th:text="'Carro: ' + ${movimentacao.carro.placa} + ' / ' + ${movimentacao.carro.modelo}"></p>
+                        <p th:text="'Motorista: ' + ${movimentacao.motorista.nome} + ' (' + ${movimentacao.motorista.cnh} + ')'"></p>
+                        <p th:text="'Status: ' + ${movimentacao.statusMovimentacao != null ? movimentacao.statusMovimentacao.descricao : 'N/A'}"></p> <hr class="mt-2 mb-2" />
+                        <div>
+                            <a th:hx-get="@{/movimentacoes/alterar/{codigo}(codigo=${movimentacao.codigo})}" hx-target="#main" hx-swap="outerHTML" class="cursor-pointer text-blue-600 hover:text-blue-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Alterar</a>
+                            <span class="mx-2">|</span>
+                            <a th:if="${movimentacao.statusMovimentacao != T(web.controlevacinacao.model.StatusMovimentacao).FINALIZADA}" th:hx-get="@{/movimentacoes/finalizar/{codigo}(codigo=${movimentacao.codigo})}"
+                               hx-target="#main" hx-swap="outerHTML"
+                               th:hx-confirm="${'Deseja finalizar a movimentação ' + movimentacao.codigo + '?'}"
+                               class="cursor-pointer text-green-600 hover:text-green-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Finalizar</a>
+                            <span th:if="${movimentacao.statusMovimentacao == T(web.controlevacinacao.model.StatusMovimentacao).FINALIZADA}" class="text-gray-500">Finalizada</span> <span class="mx-2">|</span>
+                            <a th:hx-get="@{/movimentacoes/remover/{codigo}(codigo=${movimentacao.codigo})}" hx-target="#main" hx-swap="outerHTML" th:hx-confirm="${'Você vai remover a movimentação ' + movimentacao.codigo + '!'}" class="cursor-pointer text-red-600 hover:text-red-500 decoration-2 hover:underline focus:outline-hidden focus:underline">Remover</a>
+                        </div>
+                        <hr class="mt-5 mb-5" />
+                    </div>
+                    <div th:if="${pagina.vazia}">
+                        <p class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">Nenhuma movimentação encontrada</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{layout/fragments/paginacao :: paginacao(${pagina})}"></div>
+
+    </main>
+    </body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layoutpadrao}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Página Principal</title>
+  </head>
+  <body>
+    <!-- conteudo principal -->
+    <main layout:fragment="conteudo" th:fragment="formulario" id="main" class="w-full">
+      <div th:replace="~{layout/fragments/header :: usuariologinlogout}"></div>
+      <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+      
+      <div class="m-10">
+        <div class="relative w-full">
+          <h1 class="text-3xl">Cadastro de Usuário</h1>
+
+          <form th:hx-post="@{/usuarios/cadastrar}" hx-target="#main" hx-swap="outerHTML" th:object="${usuario}">
+            <div th:replace="~{layout/fragments/forms::inputtext ('Nome', 'nome')}">...</div>
+		
+			<div th:replace="~{layout/fragments/forms::inputemail ('E-mail', 'email')}">...</div>
+
+			<div th:replace="~{layout/fragments/forms::inputpassword ('Senha', 'senha')}">...</div>
+
+			<div th:replace="~{layout/fragments/forms::inputtext ('Nome de usuário', 'nomeUsuario')}">...</div>
+
+            <div class="flex justify-between md:w-1/2">
+              <div class="w-1/2">
+                <div th:replace="~{layout/fragments/forms::inputdata ('Data de Nascimento', 'dataNascimento')}">...</div>
+              </div>
+              <div class="w-1/2">
+				<label for="papeis" class="block text-gray-700 font-medium mb-2 mt-6">Papéis</label>
+                <div th:each="papel: ${todosPapeis}" class="flex">
+                  <input type="checkbox" th:field="*{papeis}" th:value="${papel.codigo}" class="shrink-0 mt-0.5 border-gray-200 rounded text-gray-600 focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none" />
+                  <label th:for="${#ids.prev('papeis')}" th:text="${papel.nome}" class="text-sm text-gray-500 ms-3">Default checkbox</label>
+                </div>
+				<p th:if="${#fields.hasErrors('papeis')}" th:each="erro : ${#fields.errors('papeis')}" th:text="${erro} + '. '" class="text-sm text-red-600 mt-2"></p>
+              </div>
+            </div>
+
+            <button type="submit" class="py-3 px-4 inline-flex items-center mt-5 gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none">Cadastrar</button>
+          </form>
+
+          <div th:if="${notificacao != null}" th:object="${notificacao}">
+            <input type="hidden" id="mensagemSA2" th:value="*{mensagem}">
+            <input type="hidden" id="tipoSA2" th:value="*{tipo}">
+            <input type="hidden" id="intervaloSA2" th:value="*{intervalo}">
+          </div>
+        </div>
+      </div>
+
+      <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+    </main>
+    <!-- !conteudo principal -->
+
+    <!-- Nao usamos
+	<th:block layout:fragment="scripts">
+		<script src="../static/js/index.js" th:src="@{/js/index.js}"></script>
+	</th:block> -->
+  </body>
+</html>

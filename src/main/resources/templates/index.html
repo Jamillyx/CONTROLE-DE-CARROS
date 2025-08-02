@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR" layout:decorate="~{layout/layoutpadrao}" xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>Página Principal</title>
+</head>
+
+<body hx-ext="response-targets" hx-target-5*="#main" hx-target-4*="#main">
+  <main layout:fragment="conteudo" th:fragment="conteudo" id="main"
+    class="flex flex-col items-center justify-center w-full min-h-screen p-5">
+    <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+   
+
+    <img th:src="@{/images/estacionamento.jpeg}" class="w-full h-auto object-cover rounded-lg shadow-lg"
+      alt="Sistema de Estacionamento" />
+
+
+
+  </main>
+</body>
+
+</html>
